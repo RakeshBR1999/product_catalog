@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+
+services:
+  api:
+    build:
+      context: ./app
+    ports:
+      - "8000:80"
+    depends_on:
+      - sql
+      - mongo
+
+  sql:
+    image: "tiangolo/uvicorn-gunicorn-fastapi:python3.8"
+    volumes:
+      - ./sql:/docker-entrypoint-initdb.d
+    environment:
+      - DATABASE_URL=sqlite:///./sql_app.db
+
+  mongo:
+    image: "mongo"
+    ports:
+      - "27017:27017"
